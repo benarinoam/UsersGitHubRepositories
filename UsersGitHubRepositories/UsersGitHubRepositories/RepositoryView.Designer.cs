@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RepositoryView));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -36,22 +37,55 @@
             this.btnConnect = new System.Windows.Forms.Button();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbDataBases = new System.Windows.Forms.ComboBox();
             this.tbUserName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbListOfServers = new System.Windows.Forms.ComboBox();
             this.serversListBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.repositoryModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.gbGIT = new System.Windows.Forms.GroupBox();
+            this.tbGitPassword = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.tbGitLogin = new System.Windows.Forms.TextBox();
             this.gbQuery = new System.Windows.Forms.GroupBox();
+            this.btnRunQuery = new System.Windows.Forms.Button();
             this.tbQueryPrameter = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnRunQuery = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cbDataBases = new System.Windows.Forms.ComboBox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.gbUsersList = new System.Windows.Forms.GroupBox();
+            this.dgvUsers = new System.Windows.Forms.DataGridView();
+            this.bsUsers = new System.Windows.Forms.BindingSource(this.components);
+            this.bnUsersNavigator = new System.Windows.Forms.BindingNavigator(this.components);
+            this.bindingNavigatorAddNewItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
+            this.bindingNavigatorDeleteItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMovePreviousItem2 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorPositionItem = new System.Windows.Forms.ToolStripTextBox();
+            this.bindingNavigatorSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorMoveNextItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.gbRepositories = new System.Windows.Forms.GroupBox();
+            this.dgvRepositories = new System.Windows.Forms.DataGridView();
+            this.bsRepositories = new System.Windows.Forms.BindingSource(this.components);
+            this.bnRepositoryNavigator = new System.Windows.Forms.BindingNavigator(this.components);
+            this.bindingNavigatorAddNewItem1 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorCountItem1 = new System.Windows.Forms.ToolStripLabel();
+            this.bindingNavigatorDeleteItem1 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMoveFirstItem1 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMovePreviousItem1 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorPositionItem1 = new System.Windows.Forms.ToolStripTextBox();
+            this.bindingNavigatorSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.bindingNavigatorMoveNextItem1 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorMoveLastItem1 = new System.Windows.Forms.ToolStripButton();
+            this.bindingNavigatorSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -64,14 +98,23 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serversListBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryModelBindingSource)).BeginInit();
+            this.gbGIT.SuspendLayout();
             this.gbQuery.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.gbUsersList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsUsers)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bnUsersNavigator)).BeginInit();
+            this.bnUsersNavigator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.gbRepositories.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvRepositories)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsRepositories)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bnRepositoryNavigator)).BeginInit();
+            this.bnRepositoryNavigator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -91,7 +134,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.splitContainer1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.splitContainer1.Size = new System.Drawing.Size(812, 299);
+            this.splitContainer1.Size = new System.Drawing.Size(812, 410);
             this.splitContainer1.SplitterDistance = 277;
             this.splitContainer1.TabIndex = 3;
             // 
@@ -109,10 +152,11 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.gbGIT);
             this.splitContainer2.Panel2.Controls.Add(this.gbQuery);
             this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.splitContainer2.Size = new System.Drawing.Size(277, 299);
-            this.splitContainer2.SplitterDistance = 131;
+            this.splitContainer2.Size = new System.Drawing.Size(277, 410);
+            this.splitContainer2.SplitterDistance = 179;
             this.splitContainer2.TabIndex = 0;
             // 
             // groupBox1
@@ -121,6 +165,8 @@
             this.groupBox1.Controls.Add(this.btnConnect);
             this.groupBox1.Controls.Add(this.tbPassword);
             this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.cbDataBases);
             this.groupBox1.Controls.Add(this.tbUserName);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label1);
@@ -129,7 +175,7 @@
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.groupBox1.Size = new System.Drawing.Size(277, 131);
+            this.groupBox1.Size = new System.Drawing.Size(277, 179);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "פרטי התחברות";
@@ -167,7 +213,7 @@
             this.tbPassword.Size = new System.Drawing.Size(150, 20);
             this.tbPassword.TabIndex = 7;
             this.tbPassword.UseSystemPasswordChar = true;
-            this.tbPassword.Leave += new System.EventHandler(this.TbPassword_Leave);
+            this.tbPassword.Leave += new System.EventHandler(this.Password_Leave);
             // 
             // label4
             // 
@@ -178,6 +224,27 @@
             this.label4.Size = new System.Drawing.Size(47, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "סיסמא :";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(195, 147);
+            this.label2.Name = "label2";
+            this.label2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label2.Size = new System.Drawing.Size(76, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "בסיס נתונים :";
+            // 
+            // cbDataBases
+            // 
+            this.cbDataBases.FormattingEnabled = true;
+            this.cbDataBases.Items.AddRange(new object[] {
+            "<New>"});
+            this.cbDataBases.Location = new System.Drawing.Point(6, 144);
+            this.cbDataBases.Name = "cbDataBases";
+            this.cbDataBases.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.cbDataBases.Size = new System.Drawing.Size(150, 21);
+            this.cbDataBases.TabIndex = 2;
             // 
             // tbUserName
             // 
@@ -230,46 +297,82 @@
             // 
             this.repositoryModelBindingSource.DataSource = typeof(UsersGitHubRepositories.RepositoryModel);
             // 
+            // gbGIT
+            // 
+            this.gbGIT.Controls.Add(this.tbGitPassword);
+            this.gbGIT.Controls.Add(this.label6);
+            this.gbGIT.Controls.Add(this.label7);
+            this.gbGIT.Controls.Add(this.tbGitLogin);
+            this.gbGIT.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gbGIT.Enabled = false;
+            this.gbGIT.Location = new System.Drawing.Point(0, 0);
+            this.gbGIT.Name = "gbGIT";
+            this.gbGIT.Size = new System.Drawing.Size(277, 104);
+            this.gbGIT.TabIndex = 8;
+            this.gbGIT.TabStop = false;
+            this.gbGIT.Text = "GitHub";
+            // 
+            // tbGitPassword
+            // 
+            this.tbGitPassword.Location = new System.Drawing.Point(6, 53);
+            this.tbGitPassword.Name = "tbGitPassword";
+            this.tbGitPassword.PasswordChar = '*';
+            this.tbGitPassword.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tbGitPassword.Size = new System.Drawing.Size(150, 20);
+            this.tbGitPassword.TabIndex = 11;
+            this.tbGitPassword.UseSystemPasswordChar = true;
+            this.tbGitPassword.TextChanged += new System.EventHandler(this.GitLogin_TextChanged);
+            this.tbGitPassword.Leave += new System.EventHandler(this.Password_Leave);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(204, 28);
+            this.label6.Name = "label6";
+            this.label6.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label6.Size = new System.Drawing.Size(67, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "משתמש GIT";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(224, 53);
+            this.label7.Name = "label7";
+            this.label7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label7.Size = new System.Drawing.Size(47, 13);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "סיסמא :";
+            // 
+            // tbGitLogin
+            // 
+            this.tbGitLogin.Location = new System.Drawing.Point(6, 25);
+            this.tbGitLogin.MaxLength = 20;
+            this.tbGitLogin.Name = "tbGitLogin";
+            this.tbGitLogin.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tbGitLogin.Size = new System.Drawing.Size(150, 20);
+            this.tbGitLogin.TabIndex = 9;
+            this.tbGitLogin.TextChanged += new System.EventHandler(this.GitLogin_TextChanged);
+            // 
             // gbQuery
             // 
+            this.gbQuery.BackColor = System.Drawing.SystemColors.Control;
+            this.gbQuery.Controls.Add(this.btnRunQuery);
             this.gbQuery.Controls.Add(this.tbQueryPrameter);
             this.gbQuery.Controls.Add(this.label5);
-            this.gbQuery.Controls.Add(this.btnRunQuery);
-            this.gbQuery.Controls.Add(this.label2);
-            this.gbQuery.Controls.Add(this.cbDataBases);
-            this.gbQuery.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbQuery.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.gbQuery.Enabled = false;
-            this.gbQuery.Location = new System.Drawing.Point(0, 0);
+            this.gbQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.gbQuery.Location = new System.Drawing.Point(0, 110);
             this.gbQuery.Name = "gbQuery";
-            this.gbQuery.Size = new System.Drawing.Size(277, 164);
+            this.gbQuery.Size = new System.Drawing.Size(277, 117);
             this.gbQuery.TabIndex = 0;
             this.gbQuery.TabStop = false;
             this.gbQuery.Text = "חיפוש";
             // 
-            // tbQueryPrameter
-            // 
-            this.tbQueryPrameter.Location = new System.Drawing.Point(6, 72);
-            this.tbQueryPrameter.MaxLength = 20;
-            this.tbQueryPrameter.Name = "tbQueryPrameter";
-            this.tbQueryPrameter.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.tbQueryPrameter.Size = new System.Drawing.Size(150, 20);
-            this.tbQueryPrameter.TabIndex = 7;
-            this.tbQueryPrameter.TextChanged += new System.EventHandler(this.TbQueryPrameter_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(184, 66);
-            this.label5.Name = "label5";
-            this.label5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label5.Size = new System.Drawing.Size(87, 26);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "מחרוזת לחיפוש\r\nמשתמש";
-            // 
             // btnRunQuery
             // 
-            this.btnRunQuery.Enabled = false;
-            this.btnRunQuery.Location = new System.Drawing.Point(6, 129);
+            this.btnRunQuery.Location = new System.Drawing.Point(6, 82);
             this.btnRunQuery.Name = "btnRunQuery";
             this.btnRunQuery.Size = new System.Drawing.Size(86, 23);
             this.btnRunQuery.TabIndex = 4;
@@ -277,26 +380,25 @@
             this.btnRunQuery.UseVisualStyleBackColor = true;
             this.btnRunQuery.Click += new System.EventHandler(this.BtnRunQuery_Click);
             // 
-            // label2
+            // tbQueryPrameter
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(195, 22);
-            this.label2.Name = "label2";
-            this.label2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label2.Size = new System.Drawing.Size(76, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "בסיס נתונים :";
+            this.tbQueryPrameter.Location = new System.Drawing.Point(6, 22);
+            this.tbQueryPrameter.MaxLength = 20;
+            this.tbQueryPrameter.Name = "tbQueryPrameter";
+            this.tbQueryPrameter.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tbQueryPrameter.Size = new System.Drawing.Size(150, 20);
+            this.tbQueryPrameter.TabIndex = 7;
+            this.tbQueryPrameter.TextChanged += new System.EventHandler(this.QueryPrameter_TextChanged);
             // 
-            // cbDataBases
+            // label5
             // 
-            this.cbDataBases.FormattingEnabled = true;
-            this.cbDataBases.Items.AddRange(new object[] {
-            "<New>"});
-            this.cbDataBases.Location = new System.Drawing.Point(6, 19);
-            this.cbDataBases.Name = "cbDataBases";
-            this.cbDataBases.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.cbDataBases.Size = new System.Drawing.Size(150, 21);
-            this.cbDataBases.TabIndex = 2;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(184, 16);
+            this.label5.Name = "label5";
+            this.label5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label5.Size = new System.Drawing.Size(87, 26);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "מחרוזת לחיפוש\r\nמשתמש";
             // 
             // splitContainer3
             // 
@@ -314,20 +416,158 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.gbRepositories);
             this.splitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.splitContainer3.Size = new System.Drawing.Size(531, 299);
-            this.splitContainer3.SplitterDistance = 131;
+            this.splitContainer3.Size = new System.Drawing.Size(531, 410);
+            this.splitContainer3.SplitterDistance = 179;
             this.splitContainer3.TabIndex = 1;
             // 
             // gbUsersList
             // 
+            this.gbUsersList.Controls.Add(this.dgvUsers);
+            this.gbUsersList.Controls.Add(this.bnUsersNavigator);
             this.gbUsersList.Controls.Add(this.dataGridView2);
             this.gbUsersList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbUsersList.Location = new System.Drawing.Point(0, 0);
             this.gbUsersList.Name = "gbUsersList";
-            this.gbUsersList.Size = new System.Drawing.Size(531, 131);
+            this.gbUsersList.Size = new System.Drawing.Size(531, 179);
             this.gbUsersList.TabIndex = 1;
             this.gbUsersList.TabStop = false;
             this.gbUsersList.Text = "רשימת משתמשים";
+            // 
+            // dgvUsers
+            // 
+            this.dgvUsers.AllowUserToAddRows = false;
+            this.dgvUsers.AllowUserToDeleteRows = false;
+            this.dgvUsers.AutoGenerateColumns = false;
+            this.dgvUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvUsers.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dgvUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvUsers.DataSource = this.bsUsers;
+            this.dgvUsers.Location = new System.Drawing.Point(3, 41);
+            this.dgvUsers.MultiSelect = false;
+            this.dgvUsers.Name = "dgvUsers";
+            this.dgvUsers.ReadOnly = true;
+            this.dgvUsers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvUsers.ShowCellErrors = false;
+            this.dgvUsers.ShowEditingIcon = false;
+            this.dgvUsers.ShowRowErrors = false;
+            this.dgvUsers.Size = new System.Drawing.Size(525, 135);
+            this.dgvUsers.TabIndex = 2;
+            this.dgvUsers.SelectionChanged += new System.EventHandler(this.Users_SelectionChanged);
+            // 
+            // bnUsersNavigator
+            // 
+            this.bnUsersNavigator.AddNewItem = this.bindingNavigatorAddNewItem;
+            this.bnUsersNavigator.CountItem = this.bindingNavigatorCountItem;
+            this.bnUsersNavigator.DeleteItem = this.bindingNavigatorDeleteItem;
+            this.bnUsersNavigator.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bindingNavigatorMoveFirstItem,
+            this.bindingNavigatorMovePreviousItem2,
+            this.bindingNavigatorSeparator,
+            this.bindingNavigatorPositionItem,
+            this.bindingNavigatorCountItem,
+            this.bindingNavigatorSeparator1,
+            this.bindingNavigatorMoveNextItem,
+            this.bindingNavigatorMoveLastItem,
+            this.bindingNavigatorSeparator2,
+            this.bindingNavigatorAddNewItem,
+            this.bindingNavigatorDeleteItem});
+            this.bnUsersNavigator.Location = new System.Drawing.Point(3, 16);
+            this.bnUsersNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
+            this.bnUsersNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem;
+            this.bnUsersNavigator.MoveNextItem = this.bindingNavigatorMoveNextItem;
+            this.bnUsersNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem2;
+            this.bnUsersNavigator.Name = "bnUsersNavigator";
+            this.bnUsersNavigator.PositionItem = this.bindingNavigatorPositionItem;
+            this.bnUsersNavigator.Size = new System.Drawing.Size(525, 25);
+            this.bnUsersNavigator.TabIndex = 1;
+            this.bnUsersNavigator.Text = "bindingNavigator1";
+            // 
+            // bindingNavigatorAddNewItem
+            // 
+            this.bindingNavigatorAddNewItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorAddNewItem.Enabled = false;
+            this.bindingNavigatorAddNewItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorAddNewItem.Image")));
+            this.bindingNavigatorAddNewItem.Name = "bindingNavigatorAddNewItem";
+            this.bindingNavigatorAddNewItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorAddNewItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorAddNewItem.Text = "Add new";
+            // 
+            // bindingNavigatorCountItem
+            // 
+            this.bindingNavigatorCountItem.Name = "bindingNavigatorCountItem";
+            this.bindingNavigatorCountItem.Size = new System.Drawing.Size(35, 22);
+            this.bindingNavigatorCountItem.Text = "of {0}";
+            this.bindingNavigatorCountItem.ToolTipText = "Total number of items";
+            // 
+            // bindingNavigatorDeleteItem
+            // 
+            this.bindingNavigatorDeleteItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorDeleteItem.Enabled = false;
+            this.bindingNavigatorDeleteItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorDeleteItem.Image")));
+            this.bindingNavigatorDeleteItem.Name = "bindingNavigatorDeleteItem";
+            this.bindingNavigatorDeleteItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorDeleteItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorDeleteItem.Text = "Delete";
+            // 
+            // bindingNavigatorMoveFirstItem
+            // 
+            this.bindingNavigatorMoveFirstItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveFirstItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveFirstItem.Image")));
+            this.bindingNavigatorMoveFirstItem.Name = "bindingNavigatorMoveFirstItem";
+            this.bindingNavigatorMoveFirstItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveFirstItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveFirstItem.Text = "Move first";
+            // 
+            // bindingNavigatorMovePreviousItem2
+            // 
+            this.bindingNavigatorMovePreviousItem2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMovePreviousItem2.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMovePreviousItem2.Image")));
+            this.bindingNavigatorMovePreviousItem2.Name = "bindingNavigatorMovePreviousItem2";
+            this.bindingNavigatorMovePreviousItem2.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMovePreviousItem2.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMovePreviousItem2.Text = "Move previous";
+            // 
+            // bindingNavigatorSeparator
+            // 
+            this.bindingNavigatorSeparator.Name = "bindingNavigatorSeparator";
+            this.bindingNavigatorSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorPositionItem
+            // 
+            this.bindingNavigatorPositionItem.AccessibleName = "Position";
+            this.bindingNavigatorPositionItem.AutoSize = false;
+            this.bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
+            this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(50, 23);
+            this.bindingNavigatorPositionItem.Text = "0";
+            this.bindingNavigatorPositionItem.ToolTipText = "Current position";
+            // 
+            // bindingNavigatorSeparator1
+            // 
+            this.bindingNavigatorSeparator1.Name = "bindingNavigatorSeparator1";
+            this.bindingNavigatorSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorMoveNextItem
+            // 
+            this.bindingNavigatorMoveNextItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveNextItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveNextItem.Image")));
+            this.bindingNavigatorMoveNextItem.Name = "bindingNavigatorMoveNextItem";
+            this.bindingNavigatorMoveNextItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveNextItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveNextItem.Text = "Move next";
+            // 
+            // bindingNavigatorMoveLastItem
+            // 
+            this.bindingNavigatorMoveLastItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveLastItem.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveLastItem.Image")));
+            this.bindingNavigatorMoveLastItem.Name = "bindingNavigatorMoveLastItem";
+            this.bindingNavigatorMoveLastItem.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveLastItem.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveLastItem.Text = "Move last";
+            // 
+            // bindingNavigatorSeparator2
+            // 
+            this.bindingNavigatorSeparator2.Name = "bindingNavigatorSeparator2";
+            this.bindingNavigatorSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // dataGridView2
             // 
@@ -338,19 +578,150 @@
             this.dataGridView2.Location = new System.Drawing.Point(3, 16);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.Size = new System.Drawing.Size(525, 112);
+            this.dataGridView2.Size = new System.Drawing.Size(525, 160);
             this.dataGridView2.TabIndex = 0;
             // 
             // gbRepositories
             // 
+            this.gbRepositories.Controls.Add(this.dgvRepositories);
+            this.gbRepositories.Controls.Add(this.bnRepositoryNavigator);
             this.gbRepositories.Controls.Add(this.dataGridView1);
             this.gbRepositories.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbRepositories.Location = new System.Drawing.Point(0, 0);
             this.gbRepositories.Name = "gbRepositories";
-            this.gbRepositories.Size = new System.Drawing.Size(531, 164);
+            this.gbRepositories.Size = new System.Drawing.Size(531, 227);
             this.gbRepositories.TabIndex = 2;
             this.gbRepositories.TabStop = false;
             this.gbRepositories.Text = "מאגרי משתמש (Repositories)";
+            // 
+            // dgvRepositories
+            // 
+            this.dgvRepositories.AllowUserToAddRows = false;
+            this.dgvRepositories.AllowUserToDeleteRows = false;
+            this.dgvRepositories.AutoGenerateColumns = false;
+            this.dgvRepositories.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvRepositories.DataSource = this.bsRepositories;
+            this.dgvRepositories.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvRepositories.Location = new System.Drawing.Point(3, 41);
+            this.dgvRepositories.Name = "dgvRepositories";
+            this.dgvRepositories.ReadOnly = true;
+            this.dgvRepositories.Size = new System.Drawing.Size(525, 183);
+            this.dgvRepositories.TabIndex = 2;
+            // 
+            // bnRepositoryNavigator
+            // 
+            this.bnRepositoryNavigator.AddNewItem = this.bindingNavigatorAddNewItem1;
+            this.bnRepositoryNavigator.CountItem = this.bindingNavigatorCountItem1;
+            this.bnRepositoryNavigator.DeleteItem = this.bindingNavigatorDeleteItem1;
+            this.bnRepositoryNavigator.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bindingNavigatorMoveFirstItem1,
+            this.bindingNavigatorMovePreviousItem1,
+            this.bindingNavigatorSeparator3,
+            this.bindingNavigatorPositionItem1,
+            this.bindingNavigatorCountItem1,
+            this.bindingNavigatorSeparator4,
+            this.bindingNavigatorMoveNextItem1,
+            this.bindingNavigatorMoveLastItem1,
+            this.bindingNavigatorSeparator5,
+            this.bindingNavigatorAddNewItem1,
+            this.bindingNavigatorDeleteItem1});
+            this.bnRepositoryNavigator.Location = new System.Drawing.Point(3, 16);
+            this.bnRepositoryNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem1;
+            this.bnRepositoryNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem1;
+            this.bnRepositoryNavigator.MoveNextItem = this.bindingNavigatorMoveNextItem1;
+            this.bnRepositoryNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem1;
+            this.bnRepositoryNavigator.Name = "bnRepositoryNavigator";
+            this.bnRepositoryNavigator.PositionItem = this.bindingNavigatorPositionItem1;
+            this.bnRepositoryNavigator.Size = new System.Drawing.Size(525, 25);
+            this.bnRepositoryNavigator.TabIndex = 1;
+            this.bnRepositoryNavigator.Text = "bindingNavigator2";
+            // 
+            // bindingNavigatorAddNewItem1
+            // 
+            this.bindingNavigatorAddNewItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorAddNewItem1.Enabled = false;
+            this.bindingNavigatorAddNewItem1.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorAddNewItem1.Image")));
+            this.bindingNavigatorAddNewItem1.Name = "bindingNavigatorAddNewItem1";
+            this.bindingNavigatorAddNewItem1.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorAddNewItem1.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorAddNewItem1.Text = "Add new";
+            // 
+            // bindingNavigatorCountItem1
+            // 
+            this.bindingNavigatorCountItem1.Name = "bindingNavigatorCountItem1";
+            this.bindingNavigatorCountItem1.Size = new System.Drawing.Size(35, 22);
+            this.bindingNavigatorCountItem1.Text = "of {0}";
+            this.bindingNavigatorCountItem1.ToolTipText = "Total number of items";
+            // 
+            // bindingNavigatorDeleteItem1
+            // 
+            this.bindingNavigatorDeleteItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorDeleteItem1.Enabled = false;
+            this.bindingNavigatorDeleteItem1.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorDeleteItem1.Image")));
+            this.bindingNavigatorDeleteItem1.Name = "bindingNavigatorDeleteItem1";
+            this.bindingNavigatorDeleteItem1.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorDeleteItem1.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorDeleteItem1.Text = "Delete";
+            // 
+            // bindingNavigatorMoveFirstItem1
+            // 
+            this.bindingNavigatorMoveFirstItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveFirstItem1.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveFirstItem1.Image")));
+            this.bindingNavigatorMoveFirstItem1.Name = "bindingNavigatorMoveFirstItem1";
+            this.bindingNavigatorMoveFirstItem1.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveFirstItem1.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveFirstItem1.Text = "Move first";
+            // 
+            // bindingNavigatorMovePreviousItem1
+            // 
+            this.bindingNavigatorMovePreviousItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMovePreviousItem1.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMovePreviousItem1.Image")));
+            this.bindingNavigatorMovePreviousItem1.Name = "bindingNavigatorMovePreviousItem1";
+            this.bindingNavigatorMovePreviousItem1.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMovePreviousItem1.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMovePreviousItem1.Text = "Move previous";
+            // 
+            // bindingNavigatorSeparator3
+            // 
+            this.bindingNavigatorSeparator3.Name = "bindingNavigatorSeparator3";
+            this.bindingNavigatorSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorPositionItem1
+            // 
+            this.bindingNavigatorPositionItem1.AccessibleName = "Position";
+            this.bindingNavigatorPositionItem1.AutoSize = false;
+            this.bindingNavigatorPositionItem1.Name = "bindingNavigatorPositionItem1";
+            this.bindingNavigatorPositionItem1.Size = new System.Drawing.Size(50, 23);
+            this.bindingNavigatorPositionItem1.Text = "0";
+            this.bindingNavigatorPositionItem1.ToolTipText = "Current position";
+            // 
+            // bindingNavigatorSeparator4
+            // 
+            this.bindingNavigatorSeparator4.Name = "bindingNavigatorSeparator4";
+            this.bindingNavigatorSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // bindingNavigatorMoveNextItem1
+            // 
+            this.bindingNavigatorMoveNextItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveNextItem1.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveNextItem1.Image")));
+            this.bindingNavigatorMoveNextItem1.Name = "bindingNavigatorMoveNextItem1";
+            this.bindingNavigatorMoveNextItem1.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveNextItem1.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveNextItem1.Text = "Move next";
+            // 
+            // bindingNavigatorMoveLastItem1
+            // 
+            this.bindingNavigatorMoveLastItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.bindingNavigatorMoveLastItem1.Image = ((System.Drawing.Image)(resources.GetObject("bindingNavigatorMoveLastItem1.Image")));
+            this.bindingNavigatorMoveLastItem1.Name = "bindingNavigatorMoveLastItem1";
+            this.bindingNavigatorMoveLastItem1.RightToLeftAutoMirrorImage = true;
+            this.bindingNavigatorMoveLastItem1.Size = new System.Drawing.Size(23, 22);
+            this.bindingNavigatorMoveLastItem1.Text = "Move last";
+            // 
+            // bindingNavigatorSeparator5
+            // 
+            this.bindingNavigatorSeparator5.Name = "bindingNavigatorSeparator5";
+            this.bindingNavigatorSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
             // dataGridView1
             // 
@@ -361,14 +732,14 @@
             this.dataGridView1.Location = new System.Drawing.Point(3, 16);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(525, 145);
+            this.dataGridView1.Size = new System.Drawing.Size(525, 208);
             this.dataGridView1.TabIndex = 0;
             // 
             // RepositoryView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(812, 299);
+            this.ClientSize = new System.Drawing.Size(812, 410);
             this.Controls.Add(this.splitContainer1);
             this.DoubleBuffered = true;
             this.Name = "RepositoryView";
@@ -388,6 +759,8 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serversListBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryModelBindingSource)).EndInit();
+            this.gbGIT.ResumeLayout(false);
+            this.gbGIT.PerformLayout();
             this.gbQuery.ResumeLayout(false);
             this.gbQuery.PerformLayout();
             this.splitContainer3.Panel1.ResumeLayout(false);
@@ -395,8 +768,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.gbUsersList.ResumeLayout(false);
+            this.gbUsersList.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsUsers)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bnUsersNavigator)).EndInit();
+            this.bnUsersNavigator.ResumeLayout(false);
+            this.bnUsersNavigator.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.gbRepositories.ResumeLayout(false);
+            this.gbRepositories.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvRepositories)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsRepositories)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bnRepositoryNavigator)).EndInit();
+            this.bnRepositoryNavigator.ResumeLayout(false);
+            this.bnRepositoryNavigator.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
@@ -428,6 +813,39 @@
         private System.Windows.Forms.GroupBox gbRepositories;
         private System.Windows.Forms.TextBox tbQueryPrameter;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DataGridView dgvUsers;
+        private System.Windows.Forms.BindingNavigator bnUsersNavigator;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorAddNewItem;
+        private System.Windows.Forms.ToolStripLabel bindingNavigatorCountItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorDeleteItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveFirstItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMovePreviousItem2;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator;
+        private System.Windows.Forms.ToolStripTextBox bindingNavigatorPositionItem;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator1;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveNextItem;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveLastItem;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator2;
+        private System.Windows.Forms.DataGridView dgvRepositories;
+        private System.Windows.Forms.BindingNavigator bnRepositoryNavigator;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorAddNewItem1;
+        private System.Windows.Forms.ToolStripLabel bindingNavigatorCountItem1;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorDeleteItem1;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveFirstItem1;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMovePreviousItem1;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator3;
+        private System.Windows.Forms.ToolStripTextBox bindingNavigatorPositionItem1;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator4;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveNextItem1;
+        private System.Windows.Forms.ToolStripButton bindingNavigatorMoveLastItem1;
+        private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator5;
+        private System.Windows.Forms.BindingSource bsRepositories;
+        private System.Windows.Forms.BindingSource bsUsers;
+        private System.Windows.Forms.TextBox tbGitLogin;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox tbGitPassword;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.GroupBox gbGIT;
     }
 }
 

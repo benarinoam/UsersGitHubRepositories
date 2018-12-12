@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.Sql;
@@ -11,14 +9,19 @@ using System.Security;
 
 namespace UsersGitHubRepositories
 {
-    class RepositoryModel
+    class RepositoryModel : IDisposable
     {
         #region Fileds
 
         private static readonly string NEW_DATABASE = "<New>...";
         private static readonly string DEFAULT_DB = "GitHubRepositories";
-        private static readonly string REPOSITORIES = "_MG_Repositories";
-        private static readonly string USERS = "_MG_Users";
+        private static readonly string FK_REPO_USERS = "FK__MG_Repositories__MG_Users";
+        private static readonly string FK_COLUMN_NAME = "CONSTRAINT_NAME";
+
+        public static readonly string REPOSITORIES = "_MG_Repositories";
+        public static readonly string USERS = "_MG_Users";
+
+        private static readonly string TABLE_NAME_COLUMN = "TABLE_NAME";
         private string mstrUserName;
         private SecureString mobjPassword;
         private bool mblnIsWindowsAuth;
@@ -29,7 +32,7 @@ namespace UsersGitHubRepositories
         private Dictionary<string, SqlDataAdapter> mobjDataAdapters;
         private DataTable mobjDTRepositories;
         private DataTable mobjDTUsers;
-        
+
 
         #endregion
 
@@ -37,17 +40,30 @@ namespace UsersGitHubRepositories
         /// Repository Model for Managing DataAccess and Objects for the GitHub Repository Data/
         /// </summary>
         public RepositoryModel()
- 
+
         {
-          
-            GetListOfSQLServers();
+            try
+            {
 
-            InitializeDataBaseObjects();
+                GetListOfSQLServers();
 
+                InitializeDataBaseObjects();
+
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed To Initialize RepositoryModel.", Ex);
+            }
 
         }
 
-
+        /// <summary>
+        /// Setting The Credentials for Sql Servre Connection.
+        /// </summary>
+        /// <param name="strUserName">Sql Username</param>
+        /// <param name="objPassword">Sql Password</param>
+        /// <param name="blnIsWindowsAuth">Windows Authentication Active</param>
         public void SetCridential(
             string strUserName,
             System.Security.SecureString objPassword,
@@ -63,18 +79,37 @@ namespace UsersGitHubRepositories
             }
 
             this.mobjSqlConnectionStringBuilder.IntegratedSecurity = mblnIsWindowsAuth;
-            
-        }
 
+        }
+        /// <summary>
+        /// Initialize Sql Connection Objects.
+        /// </summary>
         private void InitializeDataBaseObjects()
         {
 
-            this.mobjSqlConnectionStringBuilder = new SqlConnectionStringBuilder();
-            this.mobjSqlConnection = new SqlConnection();
-            this.mobjDTRepositories = new DataTable(REPOSITORIES);
-            this.mobjDTUsers = new DataTable(USERS);
-        }
+            try
+            {
+                this.mobjSqlConnectionStringBuilder = new SqlConnectionStringBuilder();
+                this.mobjSqlConnection = new SqlConnection();
+                this.GitHubRepositories = new DataSet("GitHubRepositories");
+                this.mobjDTRepositories = new DataTable(REPOSITORIES);
+                this.mobjDTUsers = new DataTable(USERS);
 
+                GitHubRepositories.Tables.Add(mobjDTUsers);
+                GitHubRepositories.Tables.Add(mobjDTRepositories);
+
+
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed To Initialize Database Objects.", Ex);
+            }
+
+        }
+        /// <summary>
+        /// Retrive the Sql Servers List on the local network.
+        /// </summary>
         private void GetListOfSQLServers()
         {
             DataTable objServerList;
@@ -84,7 +119,7 @@ namespace UsersGitHubRepositories
                 ServersList = new BindingList<Server>();
 
                 SqlDataSourceEnumerator objDataSourceEnumInstance = SqlDataSourceEnumerator.Instance;
-                
+
                 objServerList = objDataSourceEnumInstance.GetDataSources();
 
                 foreach (DataRow objServerData in objServerList.Rows)
@@ -100,6 +135,10 @@ namespace UsersGitHubRepositories
             }
         }
 
+        /// <summary>
+        /// Read the server from the table of the Servers info.
+        /// </summary>
+        /// <param name="objServerData">Server info DataRow</param>
         private void LoadServerToList(DataRow objServerData)
         {
             Server objNewServer = new Server();
@@ -143,6 +182,7 @@ namespace UsersGitHubRepositories
                 mobjSqlConnection.Credential = mobjCredential;
 
                 mobjSqlConnection.Open();
+
                 objDatabases = mobjSqlConnection.GetSchema("databases");
 
                 mobjSqlConnection.Close();
@@ -157,167 +197,309 @@ namespace UsersGitHubRepositories
             }
         }
 
+        /// <summary>
+        /// Inserts GitHub Users to the database.
+        /// </summary>
+        /// <param name="objUsers">Object List of Users</param>
+        public void InsertUsersToDB(GitHubUsers objUsers)
+        {
+
+            mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
+
+            mobjSqlConnection.Credential = mobjCredential;
+
+            try
+            {
+                mobjSqlConnection.Open();
+
+                mobjDataAdapters[USERS].FillSchema(mobjDTUsers, SchemaType.Source);
+
+                mobjDataAdapters[USERS].FillLoadOption = LoadOption.OverwriteChanges;
+
+                mobjDataAdapters[USERS].Fill(mobjDTUsers);
+
+                foreach (User objUser in objUsers.Items)
+                {
+                    InsertNewUser(objUser);
+                }
+
+                mobjDataAdapters[USERS].Update(mobjDTUsers);
+
+                mobjDTUsers.Clear();
+
+                mobjDataAdapters[USERS].Fill(mobjDTUsers);
+
+                mobjSqlConnection.Close();
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Insert Users to the database.", Ex);
+            }
+
+        }
+        /// <summary>
+        /// Get Spacific User's Repositories from the Database.
+        /// </summary>
+        /// <param name="intSelectedUserID">The UserID</param>
+        public void GetUserRepository(int intSelectedUserID)
+        {
+            mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
+
+            mobjSqlConnection.Credential = mobjCredential;
+
+            try
+            {
+                mobjSqlConnection.Open();
+
+                mobjDTRepositories.Clear();
+
+                mobjDataAdapters[REPOSITORIES].
+                    SelectCommand.Parameters["@UserID"].Value = intSelectedUserID;
+
+                mobjDataAdapters[REPOSITORIES].Fill(mobjDTRepositories);
+                
+                mobjSqlConnection.Close();
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Get User's Repositories from the Database.", Ex);
+            }
+        }
+
+        /// <summary>
+        /// Inserts GitHub User's Repositories to the Database.
+        /// </summary>
+        /// <param name="objUser">The User that holds the repositories</param>
+        /// <param name="objUserRepositories">The User's Repositories</param>
         public void InsertUserRepositories(User objUser, List<Repository> objUserRepositories)
         {
             mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
 
             mobjSqlConnection.Credential = mobjCredential;
 
-            mobjSqlConnection.Open();
-
-
-
-            mobjDataAdapters[REPOSITORIES].FillSchema(mobjDTRepositories, SchemaType.Source);
-
-            mobjDataAdapters[REPOSITORIES].FillSchema(mobjDTUsers, SchemaType.Source);
-
-            InsertNewUser(objUser);
-
-            foreach (Repository objRepository in objUserRepositories)
+            try
             {
-                InsertNewRepository(objUser, objRepository);
+                mobjSqlConnection.Open();
+
+
+                mobjDTRepositories.Clear();
+
+                mobjDataAdapters[REPOSITORIES].FillSchema(mobjDTRepositories, SchemaType.Source);
+
+                int intUserID =
+                    (from objRow in mobjDTUsers.AsEnumerable()
+                     where objRow.Field<string>("node_id").Equals(objUser.Node_id)
+                     select objRow.Field<int>("UserID")).Single();
+
+                mobjDataAdapters[REPOSITORIES].
+                    SelectCommand.Parameters["@UserID"].Value = intUserID;
+
+                mobjDataAdapters[REPOSITORIES].Fill(mobjDTRepositories);
+
+                foreach (Repository objRepository in objUserRepositories)
+                {
+                    InsertNewRepository(intUserID, objRepository);
+                }
+
+                mobjDataAdapters[REPOSITORIES].Update(mobjDTRepositories);
+
+                mobjDTRepositories.Clear();
+
+                mobjSqlConnection.Close();
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Insert Repositories to the Database.", Ex);
             }
 
-            mobjSqlConnection.Close();
-
         }
-
-        private void InsertNewRepository(User objUser, Repository objRepository)
+        /// <summary>
+        /// Creates New Row in the Repository Database.
+        /// </summary>
+        /// <param name="intUserID">User Id of the repository - From DB</param>
+        /// <param name="objRepository">Repository Data</param>
+        private void InsertNewRepository(int intUserID, Repository objRepository)
         {
-            DataRow objNewRepository = mobjDTRepositories.NewRow();
+            DataRow objRepoExist;
+            DataRow objNewRepository;
 
-            mobjDTRepositories.Rows.Add(new object[]
-                            {
-                objRepository.ID,
-                    objRepository.Name,
-                    objRepository.Node_id,
-                    objRepository.Language,
-                    objUser.Id
-                });
-
-            mobjDTRepositories.AcceptChanges();
-        }
-
-        private void InsertNewUser(User objUser)
-        {
-            DataRow objNewUser = mobjDTUsers.NewRow();
-
-            mobjDTUsers.Rows.Add(new object[]
+            try
             {
-                objUser.Id,
-                objUser.Login,
-                objUser.Name,
-                objUser.Followers,
-                objUser.Node_id,
-                objUser.Size
-            });
+                var objRepoSearch =
+                    from objDataRow in mobjDTRepositories.AsEnumerable()
+                    where objDataRow.Field<string>("node_id") == objRepository.Node_id &&
+                           objDataRow.Field<int>("UserID") == intUserID
+                    select objDataRow;
 
-            mobjDTUsers.AcceptChanges();
-        }
-
-        private void LoadDatabasesList(DataTable objDatabases)
-        {
-            DatabasesList = new BindingList<string>
-            {
-                NEW_DATABASE
-            };
-
-            foreach (DataRow objDatabase in objDatabases.Rows)
-            {
-                if (!(objDatabase["Database_Name"] is System.DBNull))
+                if (objRepoSearch.Count() == 0)
                 {
-                    DatabasesList.Add(objDatabase["Database_Name"].ToString());
+                    objNewRepository = mobjDTRepositories.NewRow();
+
+                    objNewRepository["Name"] = objRepository.Name ?? @"N\A";
+                    objNewRepository["node_id"] = objRepository.Node_id ?? @"N\A";
+                    objNewRepository["Language"] = objRepository.Language ?? @"N\A";
+                    objNewRepository["UserID"] = intUserID;
+
+                    mobjDTRepositories.Rows.Add(objNewRepository);
+                }
+                else
+                {
+                    objRepoExist = objRepoSearch.Single();
+
+                    objRepoExist["Name"] = objRepository.Name ?? @"N\A";
+                    objRepoExist["node_id"] = objRepository.Node_id ?? @"N\A";
+                    objRepoExist["Language"] = objRepository.Language ?? @"N\A";
+                    objRepoExist["UserID"] = intUserID;
+
                 }
             }
-        }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed Add new Row to Repository.", Ex);
+            }
 
+        }
+        /// <summary>
+        /// Insert New User to the Database.
+        /// </summary>
+        /// <param name="objUser">The New User Data.</param>
+        private void InsertNewUser(User objUser)
+        {
+            DataRow objUserExist;
+            DataRow objNewUser;
+
+            try
+            {
+                var objUserSearch =
+                    from objDataRow in mobjDTUsers.AsEnumerable()
+                     where objDataRow.Field<string>("node_id") == objUser.Node_id
+                     select objDataRow;
+
+                if (objUserSearch.Count() == 0)
+                {
+                    objNewUser = mobjDTUsers.NewRow();
+
+                    objNewUser["UserName"] = objUser.Login ?? @"N\A";
+                    objNewUser["FullName"] = objUser.Name ?? @"N\A";
+                    objNewUser["Followers"] = objUser.Followers;
+                    objNewUser["node_id"] = objUser.Node_id ?? @"N\A";
+                    objNewUser["Size"] = objUser.Size;
+
+                    mobjDTUsers.Rows.Add(objNewUser);
+                    
+                }
+                else
+                {
+                    objUserExist = objUserSearch.Single();
+
+                    objUserExist["UserName"] = objUser.Login ?? @"N\A";
+                    objUserExist["FullName"] = objUser.Name ?? @"N\A";
+                    objUserExist["Followers"] = objUser.Followers;
+                    objUserExist["node_id"] = objUser.Node_id ?? @"N\A";
+                    objUserExist["Size"] = objUser.Size;
+
+                }
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Add new User Row to Database", Ex);
+            }
+
+        }
+        /// <summary>
+        /// List the Databses of the Current Sql Server.
+        /// </summary>
+        /// <param name="objDatabases"></param>
+        private void LoadDatabasesList(DataTable objDatabases)
+        {
+            try
+            {
+                DatabasesList = new BindingList<string>
+                {
+                    NEW_DATABASE
+                };
+
+                foreach (DataRow objDatabase in objDatabases.Rows)
+                {
+                    if (!(objDatabase["Database_Name"] is System.DBNull))
+                    {
+                        DatabasesList.Add(objDatabase["Database_Name"].ToString());
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Load Databases List.", Ex);
+            }
+        }
+        /// <summary>
+        /// Creates New Database If it's not Exists on the Server.
+        /// </summary>
+        /// <param name="strDatabaseName">New Database Name</param>
         public void CreateDataBase(string strDatabaseName)
         {
-            if (strDatabaseName.Equals(NEW_DATABASE))
+            try
             {
-                CreateNewDataBase();
-            }
-            else
-            {
-                mobjSqlConnectionStringBuilder.InitialCatalog = strDatabaseName;
-            }
+                if (strDatabaseName.Equals(NEW_DATABASE))
+                {
+                    CreateNewDataBase();
+                }
+                else
+                {
+                    mobjSqlConnectionStringBuilder.InitialCatalog = strDatabaseName;
+                }
 
-            CreateRepositoryTables();
+                CreateRepositoryTables();
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Create Database.", Ex);
+            }
 
         }
-
+        /// <summary>
+        /// Creates Repository tables if its not Exists.
+        /// </summary>
         private void CreateRepositoryTables()
         {
             DataTable objTablesList;
-            Dictionary<string,string> objTablesToCreate;
+            DataTable objForeignKeys;
+            Dictionary<string, string> objTablesToCreate;
 
-            objTablesList = GetDBTablesList();
-
-            objTablesToCreate = CheckRepositoryTablesExists(objTablesList);
-
-            CreateTables(objTablesToCreate);
-
-            UpdateTablesCommands(objTablesToCreate);
-        }
-
-        private void UpdateTablesCommands(Dictionary<string, string> objTablesToCreate)
-        {
-            mobjDataAdapters = new Dictionary<string, SqlDataAdapter>()
+            try
             {
-                { REPOSITORIES,new SqlDataAdapter("",mobjSqlConnection) },
-                { USERS,new SqlDataAdapter("",mobjSqlConnection) }
-            };
-            UpdateRepositoriesCommand();
+                objTablesList = GetDBTablesList();
 
-            UpdateUsersCommands();
+                objForeignKeys = GetFKeysList();
+
+                objTablesToCreate = CheckRepositoryTablesExists(objTablesList, objForeignKeys);
+
+                CreateTables(objTablesToCreate);
+
+                UpdateTablesCommands(objTablesToCreate);
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed to create repositories Tables.", Ex);
+            }
 
         }
-
-        private void UpdateUsersCommands()
+        /// <summary>
+        /// Check Foriegn Keys on Existing Tables .
+        /// </summary>
+        /// <returns></returns>
+        private DataTable GetFKeysList()
         {
-            mobjDataAdapters[USERS].SelectCommand =
-                new SqlCommand("SELECT * FROM _MG_Users");
+            DataTable objFKeysList;
 
-            mobjDataAdapters[USERS].UpdateCommand =
-                new SqlCommand(
-                "UPDATE _MG_Users " +
-                "SET [Username]=@Username,[FullName]=@FullName,[Followers]=@Followers,[node_id]=@Node_id,[Size]=@Size" +
-                "WHERE [UserID] = @ID");
-
-            mobjDataAdapters[USERS].InsertCommand =
-                new SqlCommand(
-                    "INSERT INTO _MG_Users " +
-                    "VALUES (@ID,@Username,@FullName,@Followers,@Node_id,@Size)");
-
-            mobjDataAdapters[USERS].DeleteCommand =
-                new SqlCommand("DELETE FROM _MG_Users WHERE [UserID] = @ID");
-        }
-
-        private void UpdateRepositoriesCommand()
-        {
-            mobjDataAdapters[REPOSITORIES].SelectCommand =
-                            new SqlCommand("SELECT * FROM _MG_Repositories");
-
-            mobjDataAdapters[REPOSITORIES].UpdateCommand =
-                new SqlCommand(
-                "UPDATE _MG_Repositories " +
-                "SET [Name]=@Name,[node_id]=@Node_id,[Language]=@Language,[UserID]=@UserID" +
-                "WHERE [RepositoryID] = @ID");
-
-            mobjDataAdapters[REPOSITORIES].InsertCommand =
-                new SqlCommand(
-                    "INSERT INTO _MG_Repositories " +
-                    "VALUES (@ID,@Name,@Node_id,@Language,@UserID)");
-
-            mobjDataAdapters[REPOSITORIES].DeleteCommand =
-                new SqlCommand("DELETE FROM _MG_Repositories WHERE [RepositoryID] = @ID");
-        }
-
-        private void CreateTables(Dictionary<string,string> objTablesToCreate)
-        {
-            SqlCommand objSqlCommand;
-
-            if (objTablesToCreate.Count > 0)
+            try
             {
                 mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
 
@@ -325,37 +507,394 @@ namespace UsersGitHubRepositories
 
                 mobjSqlConnection.Open();
 
-                objSqlCommand = mobjSqlConnection.CreateCommand();
-
-                foreach (string strSqlCommand in objTablesToCreate.Values)
-                {
-                    objSqlCommand.CommandText = strSqlCommand;
-
-                    objSqlCommand.ExecuteNonQuery();
-                }
+                objFKeysList = mobjSqlConnection.GetSchema("ForeignKeys");
 
                 mobjSqlConnection.Close();
             }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed to get Database tables.", Ex);
+            }
+
+            return objFKeysList;
+        }
+        /// <summary>
+        /// Updates the SqlCommands of the Repositories tables SELECT,INSERT,UPDATE,DELETE.
+        /// </summary>
+        /// <param name="objTablesToCreate">List of tables to create</param>
+        private void UpdateTablesCommands(Dictionary<string, string> objTablesToCreate)
+        {
+            try
+            {
+                mobjDataAdapters = new Dictionary<string, SqlDataAdapter>()
+            {
+                { REPOSITORIES,new SqlDataAdapter(
+                    "SELECT * FROM _MG_Repositories",
+                    mobjSqlConnection) },
+                { USERS,new SqlDataAdapter(
+                    "SELECT * FROM _MG_Users",
+                    mobjSqlConnection) }
+            };
+
+                UpdateRepositoriesCommand();
+
+                UpdateUsersCommands();
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Update Table Commands.", Ex);
+            }
+
+        }
+        /// <summary>
+        /// Updates Te Users table commands.
+        /// </summary>
+        private void UpdateUsersCommands()
+        {
+            try
+            {
+                mobjDataAdapters[USERS].SelectCommand =
+                       new SqlCommand("SELECT * FROM _MG_Users",
+                       mobjSqlConnection);
+
+                mobjDataAdapters[USERS].UpdateCommand =
+                    new SqlCommand(
+                    "UPDATE _MG_Users " +
+                    "SET [Username]=@Username,[FullName]=@FullName,[Followers]=@Followers,[Size]=@Size " +
+                    "WHERE [UserID]=@UserID",
+                    mobjSqlConnection);
+
+                SetUsersUpdateParameters();
+
+                mobjDataAdapters[USERS].InsertCommand =
+                    new SqlCommand(
+                        "INSERT INTO _MG_Users " +
+                        "VALUES (@Username,@FullName,@Followers,@Node_id,@Size)",
+                        mobjSqlConnection);
+
+                SetUsersInsertParameters();
+
+                mobjDataAdapters[USERS].DeleteCommand =
+                    new SqlCommand("DELETE FROM _MG_Users WHERE [UserID] = @ID",
+                    mobjSqlConnection);
+
+
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Set Commands.", Ex);
+            }
         }
 
+        private void SetUsersUpdateParameters()
+        {
+            try
+            {
+                mobjDataAdapters[USERS].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@Username", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "UserName",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].UpdateCommand.Parameters.Add(
+                new SqlParameter("@Fullname", SqlDbType.NVarChar)
+                {
+                    SourceColumn = "FullName",
+                    SourceVersion = DataRowVersion.Original
+                });
+                mobjDataAdapters[USERS].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@Followers", SqlDbType.Int)
+                    {
+                        SourceColumn = "Followers",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@Node_id", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "node_id",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@Size", SqlDbType.Int)
+                    {
+                        SourceColumn = "Size",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@UserID", SqlDbType.Int)
+                    {
+                        SourceColumn = "UserID",
+                        SourceVersion = DataRowVersion.Original
+                    });
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Inser new INSERT Parameters", Ex);
+            }
+        }
+
+        /// <summary>
+        /// Sets INSERT parameters.
+        /// </summary>
+        private void SetUsersInsertParameters()
+        {
+            try
+            {
+                mobjDataAdapters[USERS].InsertCommand.Parameters.Add(
+                    new SqlParameter("@Username", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "UserName",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].InsertCommand.Parameters.Add(
+                new SqlParameter("@Fullname", SqlDbType.NVarChar)
+                {
+                    SourceColumn = "FullName",
+                    SourceVersion = DataRowVersion.Original
+                });
+                mobjDataAdapters[USERS].InsertCommand.Parameters.Add(
+                    new SqlParameter("@Followers", SqlDbType.Int)
+                    {
+                        SourceColumn = "Followers",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].InsertCommand.Parameters.Add(
+                    new SqlParameter("@Node_id", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "node_id",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[USERS].InsertCommand.Parameters.Add(
+                    new SqlParameter("@Size", SqlDbType.Int)
+                    {
+                        SourceColumn = "Size",
+                        SourceVersion = DataRowVersion.Original
+                    });
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Inser new INSERT Parameters", Ex);
+            }
+        }
+        /// <summary>
+        /// Set Repositories Commands
+        /// </summary>
+        private void UpdateRepositoriesCommand()
+        {
+            try
+            {
+                mobjDataAdapters[REPOSITORIES].SelectCommand =
+                                new SqlCommand(
+                                    "SELECT * FROM _MG_Repositories " +
+                                    "WHERE UserID=@UserID",
+                                mobjSqlConnection);
+
+                SetRepoSelectParameters();
+
+                mobjDataAdapters[REPOSITORIES].UpdateCommand =
+                    new SqlCommand(
+                    "UPDATE _MG_Repositories " +
+                    "SET [Name]=@Name,[Language]=@Language,[UserID]=@UserID,[node_id]=@Node_id " +
+                    "WHERE [RepositoryID]=@RepositoryID",
+                    mobjSqlConnection);
+
+                SetRepoUpdateParameters();
+
+                mobjDataAdapters[REPOSITORIES].InsertCommand =
+                    new SqlCommand(
+                        "INSERT INTO _MG_Repositories " +
+                        "VALUES (@Name,@Node_id,@Language,@UserID)",
+                        mobjSqlConnection);
+
+                SetRepoInsertParameters();
+
+                mobjDataAdapters[REPOSITORIES].DeleteCommand =
+                    new SqlCommand("DELETE FROM _MG_Repositories WHERE [RepositoryID] = @ID",
+                    mobjSqlConnection);
+            }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed Create Repositories Commands.", Ex);
+            }
+        }
+
+        private void SetRepoSelectParameters()
+        {
+            try
+            {
+
+                mobjDataAdapters[REPOSITORIES].SelectCommand.Parameters.Add(
+                 new SqlParameter("@UserID", SqlDbType.NVarChar)
+                 {
+                     SourceColumn = "UserID",
+                     SourceVersion = DataRowVersion.Original
+                 });
+            }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed Insert new SELECT Parameters", Ex);
+            }
+        }
+
+        private void SetRepoUpdateParameters()
+        {
+            try
+            {
+
+                mobjDataAdapters[REPOSITORIES].UpdateCommand.Parameters.Add(
+                 new SqlParameter("@Name", SqlDbType.NVarChar)
+                 {
+                     SourceColumn = "Name",
+                     SourceVersion = DataRowVersion.Original
+                 });
+                mobjDataAdapters[REPOSITORIES].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@Language", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "Language",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[REPOSITORIES].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@Node_id", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "node_id",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[REPOSITORIES].UpdateCommand.Parameters.Add(
+                    new SqlParameter("@UserID", SqlDbType.Int)
+                    {
+                        SourceColumn = "UserID",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[REPOSITORIES].UpdateCommand.Parameters.Add(
+                     new SqlParameter("@RepositoryID", SqlDbType.Int)
+                     {
+                         SourceColumn = "RepositoryID",
+                         SourceVersion = DataRowVersion.Original
+                     });
+            }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed Insert new UPDATE Parameters", Ex);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Set Repositories INSERT Parameters.
+        /// </summary>
+        private void SetRepoInsertParameters()
+        {
+            try
+            {
+                mobjDataAdapters[REPOSITORIES].InsertCommand.Parameters.Add(
+               new SqlParameter("@Name", SqlDbType.NVarChar)
+               {
+                   SourceColumn = "Name",
+                   SourceVersion = DataRowVersion.Original
+               });
+                mobjDataAdapters[REPOSITORIES].InsertCommand.Parameters.Add(
+                    new SqlParameter("@Language", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "Language",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[REPOSITORIES].InsertCommand.Parameters.Add(
+                    new SqlParameter("@Node_id", SqlDbType.NVarChar)
+                    {
+                        SourceColumn = "node_id",
+                        SourceVersion = DataRowVersion.Original
+                    });
+                mobjDataAdapters[REPOSITORIES].InsertCommand.Parameters.Add(
+                    new SqlParameter("@UserID", SqlDbType.Int)
+                    {
+                        SourceColumn = "UserID",
+                        SourceVersion = DataRowVersion.Original
+                    });
+            }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed Insert new INSERT Parameters", Ex);
+            }
+        }
+
+        /// <summary>
+        /// Creates tables in the databsae if it's Missing.
+        /// </summary>
+        /// <param name="objTablesToCreate">List of Missing Tables</param>
+        private void CreateTables(Dictionary<string,string> objTablesToCreate)
+        {
+            SqlCommand objSqlCommand;
+
+            try
+            {
+                if (objTablesToCreate.Count > 0)
+                {
+                    mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
+
+                    mobjSqlConnection.Credential = mobjCredential;
+
+                    mobjSqlConnection.Open();
+
+                    objSqlCommand = mobjSqlConnection.CreateCommand();
+
+                    foreach (string strCommandName in objTablesToCreate.Keys)
+                    {
+
+                        objSqlCommand.CommandText = objTablesToCreate[strCommandName];
+
+                        objSqlCommand.ExecuteNonQuery();
+
+                    }
+
+                    mobjSqlConnection.Close();
+                }
+            }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed To create table in the database.", Ex);
+            }
+        }
+        /// <summary>
+        /// Get a list of tables from the selected database.
+        /// </summary>
+        /// <returns></returns>
         private DataTable GetDBTablesList()
         {
             DataTable objTablesList;
+            
+            try
+            {
+                mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
 
-            mobjSqlConnection.ConnectionString = mobjSqlConnectionStringBuilder.ConnectionString;
+                mobjSqlConnection.Credential = mobjCredential;
 
-            mobjSqlConnection.Credential = mobjCredential;
+                mobjSqlConnection.Open();
 
-            mobjSqlConnection.Open();
+                objTablesList = mobjSqlConnection.GetSchema("Tables");               
 
-            objTablesList = mobjSqlConnection.GetSchema("Tables");
+                mobjSqlConnection.Close();
+            }
+            catch (Exception Ex)
+            {
 
-            mobjSqlConnection.Close();
+                throw new Exception("Failed to get Database tables.",Ex);
+            }
 
             return objTablesList;
         }
-
-        private Dictionary<string,string> CheckRepositoryTablesExists(DataTable objTablesList)
+        /// <summary>
+        /// New Tables Script for Database Tables.
+        /// </summary>
+        /// <param name="objTablesList">List of Tables from the Sql Server.</param>
+        /// <param name="objFKeysList">List of Foreign Keys of the tables</param>
+        /// <returns></returns>
+        private Dictionary<string,string> CheckRepositoryTablesExists(DataTable objTablesList,DataTable objFKeysList)
         {
             Dictionary<string, string> objRepositoryTables = new Dictionary<string, string>
             {
@@ -415,32 +954,48 @@ namespace UsersGitHubRepositories
                     "ON [PRIMARY]) " +
                     "ON [PRIMARY]"
                 },
-                {"Relation1",
+                {FK_REPO_USERS,
                 "ALTER TABLE [dbo].[_MG_Repositories]  " +
                 "WITH CHECK ADD  CONSTRAINT [FK__MG_Repositories__MG_Users] " +
                 "FOREIGN KEY([UserID])REFERENCES [dbo].[_MG_Users] ([UserID])"
-                },
-                {"Relation2",
-                "ALTER TABLE [dbo].[_MG_Repositories] " +
-                "CHECK CONSTRAINT [FK__MG_Repositories__MG_Users]"
                 }
             };
-            
 
-            foreach (DataRow objTableInfo in objTablesList.Rows)
+
+            try
             {
-                if (!(objTableInfo[0] is System.DBNull))
+                foreach (DataRow objTableInfo in objTablesList.Rows)
                 {
-                    if (objRepositoryTables.Keys.Contains(objTableInfo[0].ToString()))
+                    if (!(objTableInfo[TABLE_NAME_COLUMN] is System.DBNull))
                     {
-                        objRepositoryTables.Remove(objTableInfo[0].ToString());
+                        if (objRepositoryTables.Keys.Contains(objTableInfo[TABLE_NAME_COLUMN].ToString()))
+                        {
+                            objRepositoryTables.Remove(objTableInfo[TABLE_NAME_COLUMN].ToString());
+                        }
                     }
                 }
+                foreach (DataRow objFKeysInfo in objFKeysList.Rows)
+                {
+                    if (!(objFKeysInfo[FK_COLUMN_NAME] is System.DBNull))
+                    {
+                        if (objRepositoryTables.Keys.Contains(objFKeysInfo[FK_COLUMN_NAME].ToString()))
+                        {
+                            objRepositoryTables.Remove(objFKeysInfo[FK_COLUMN_NAME].ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+
+                throw new Exception("Failed Creating Tables List.",Ex);
             }
 
             return objRepositoryTables;
         }
-
+        /// <summary>
+        /// Create New Database if It Not Exists.
+        /// </summary>
         private void CreateNewDataBase()
         {
             SqlCommand objSqlCreate;
@@ -478,12 +1033,25 @@ namespace UsersGitHubRepositories
                 throw new Exception("Failed in Create Database",Ex);
             }
         }
+
+        public void Dispose()
+        {
+            mobjPassword.Dispose();
+            mobjCredential = null;
+            mobjSqlConnectionStringBuilder.Clear();
+            mobjSqlConnection.Dispose();
+            mobjDataAdapters.Clear();
+            mobjDTRepositories.Dispose();
+            mobjDTUsers.Dispose();
+        }
+
         #region Props
 
         public BindingList<Server> ServersList { get; set; }
 
         public BindingList<string> DatabasesList { get; set; }
 
+        public DataSet GitHubRepositories { get; set; }
 
         #endregion
 
@@ -507,7 +1075,7 @@ namespace UsersGitHubRepositories
     }
     public class User
     {
-        public int Id { get; set; }
+        public int UserID { get; set; }
         public string Login { get; set; }
         public string Name { get; set; }
         public int Followers { get; set; }
@@ -518,7 +1086,7 @@ namespace UsersGitHubRepositories
         {
             if (objUserData != null)
             {
-                if (Id.Equals(objUserData.Id) && 
+                if (Node_id.Equals(objUserData.Node_id) && 
                     Login.Equals(objUserData.Login))
                 {
                     if (objUserData.Name != null)
@@ -528,10 +1096,6 @@ namespace UsersGitHubRepositories
                     if(objUserData.Followers != 0)
                     {
                         Followers = objUserData.Followers;
-                    }
-                    if (objUserData.Node_id != null)
-                    {
-                        Node_id = objUserData.Node_id;
                     }
                     if (objUserData.Size != 0)
                     {
@@ -544,10 +1108,10 @@ namespace UsersGitHubRepositories
 
     public class Repository
     {
-        public int ID { get; set; }
+        public int RepositoryID { get; set; }
         public string Name { get; set; }
         public string Node_id { get; set; }
         public string Language { get; set; }
-        public User Owner { get; set; }
+        public int UserID { get; set; }
     }
 }
