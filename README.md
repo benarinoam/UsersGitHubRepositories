@@ -1,4 +1,5 @@
 # UsersGitHubRepositories
+
 Thie App gets users Repositories List With GitHub API
 
 The UsersGitHubRepositories app use gitHub api to request :
@@ -15,11 +16,47 @@ The UsersGitHubRepositories app use gitHub api to request :
  Use Windows Form to display the results.
  Use GitHub Api.
  
- * GitHub Api restrict for only 1000 Search Results per Request.
- * GitHub Api restrict for only 60 requests per hour. 
+ *GitHub Api restrict for only 1000 Search Results per Request.
+ *GitHub Api restrict for only 60 requests per hour without Authorization.
+ ^GitHub Api Limit Requests to 5000 per hour with Basic Authentication. 
+ *No Use Of Backround Worker to make UI responding.
+ *N/A Is Repository without Language
  
- ===============
  SQL Queries
- ===============
+
+*I 
+
+USE GitHubRepositoriesGO
+
+	SELECT count(UserId) As Number,'0-50' As Category
+	FROM [dbo].[_MG_Users]
+	WHERE followers <= 50 
+UNION
+	SELECT count(UserId) As Number,'51-500' As Category
+	FROM [dbo].[_MG_Users]
+	WHERE followers between 51 and 500
+UNION
+	SELECT count(UserId) As Number,'500+' As Category
+	FROM [dbo].[_MG_Users]
+	WHERE followers > 500 
+
+*II
+
+SELECT B.Language,Count(B.UserId) AS Number
+FROM 
+	(SELECT C.UserID,MAX(C.UserNumberOfRepo) AS UserTopLanguage
+	FROM (SELECT UserID,Language,count(Language) AS UserNumberOfRepo
+			FROM _MG_Repositories
+			GROUP BY UserID,Language) AS C
+	GROUP BY UserID) AS A
+LEFT OUTER JOIN 
+	(SELECT UserID,Language,count(Language) AS UserNumberOfRepo
+	FROM _MG_Repositories
+	GROUP BY UserID,Language) AS B
+ON A.UserID = B.UserID And A.UserTopLanguage = B.UserNumberOfRepo
+GROUP BY B.Language
+
+
+ 
  
  
