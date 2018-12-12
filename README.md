@@ -1,7 +1,8 @@
 # UsersGitHubRepositories
 
 This App gets users Repositories List With GitHub API 
-the UsersGitHubRepositories app use gitHub api to request :
+
+It Uses gitHub api to request :
 
 	1. Connects to GitHub API and gets all the users that match a search parameter \(string\). 
 
