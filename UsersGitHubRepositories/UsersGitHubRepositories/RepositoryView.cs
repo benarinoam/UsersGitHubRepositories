@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security;
 using System.Windows.Forms;
 
@@ -9,6 +10,10 @@ namespace UsersGitHubRepositories
     {
         private RepositoryModel mobjRepositoryModel;
         private SecureString mobjSP;
+        private string mstrQueryParam;
+        private string mstrSelectedDB;
+        private string mstrGitLogin;
+        private string mstrGitPassword;
 
         public RepositoryView()
         {
@@ -17,6 +22,10 @@ namespace UsersGitHubRepositories
             {
                 this.mobjRepositoryModel = new RepositoryModel();
                 this.mobjSP = new SecureString();
+                this.mstrQueryParam = string.Empty;
+                this.mstrSelectedDB = string.Empty;
+                this.mstrGitLogin = string.Empty;
+                this.mstrGitPassword = string.Empty;
 
                 InitializeComponent();
 
@@ -59,6 +68,7 @@ namespace UsersGitHubRepositories
             }
             catch (Exception Ex)
             {
+                Console.WriteLine(Ex.Message);
                 MessageBox.Show(this, "נכשל בהתחברות לשרת הנתונים", "שגיאה", MessageBoxButtons.OK);                
             }
             
@@ -126,10 +136,12 @@ namespace UsersGitHubRepositories
             if (!string.IsNullOrEmpty(tbQueryPrameter.Text))
             {
                 btnRunQuery.Enabled = true;
+                btnRefresh.Enabled = true;
             }
             else
             {
                 btnRunQuery.Enabled = false;
+                btnRefresh.Enabled = false;
             }
         }
         /// <summary>
@@ -137,34 +149,27 @@ namespace UsersGitHubRepositories
         /// Get GitHub User's Repositories and Load the data to the DataBase 
         /// and Views.
         /// </summary>
-        private void BtnRunQuery_Click(object sender, EventArgs e)
+        private void RunQuery_Click(object sender, EventArgs e)
         {
-            List<Repository> objUserRepositories;
-            GitHubUsers objUsersResult;
-
+            
             try
             {
-                mobjRepositoryModel.CreateDataBase(cbDataBases.Text);
+                UpdateDataView();
 
-                GitHubClient.OpenClient(string.Format("{0}:{1}", tbGitLogin.Text, tbGitPassword.Text));
-
-                objUsersResult = GitHubClient.GetUsersAsync(tbQueryPrameter.Text).GetAwaiter().GetResult();
-
-                objUsersResult = GitHubClient.GetUsersDataAsync(objUsersResult).GetAwaiter().GetResult();
-
-                mobjRepositoryModel.InsertUsersToDB(objUsersResult);
-
-                foreach (User objUser in objUsersResult.Items)
+                if (!bwGetUsersRepo.IsBusy)
                 {
-                    objUserRepositories = GitHubClient.GetUserRepsitoriesAsync(objUser).GetAwaiter().GetResult();
+                    mstrQueryParam = tbQueryPrameter.Text;
+                    mstrSelectedDB = cbDataBases.Text;
+                    mstrGitLogin= tbGitLogin.Text;
+                    mstrGitPassword = tbGitPassword.Text;
 
-                    mobjRepositoryModel.InsertUserRepositories(objUser, objUserRepositories);
+                    bwGetUsersRepo.RunWorkerAsync(mobjRepositoryModel);
                 }
 
-                UpdateDataView();
             }
             catch (Exception Ex)
             {
+                Console.WriteLine(Ex.Message);
                 MessageBox.Show(
                     this,
                     "החיפוש במאגר נכשל", 
@@ -175,6 +180,8 @@ namespace UsersGitHubRepositories
             }
         }
 
+ 
+ 
         /// <summary>
         /// Update the View that lists the Users and Repositories.
         /// </summary>
@@ -190,6 +197,7 @@ namespace UsersGitHubRepositories
 
                 bnUsersNavigator.BindingSource = bsUsers;
                 bnRepositoryNavigator.BindingSource = bsRepositories;
+
                 this.dgvRepositories.AutoGenerateColumns = true;
                 this.dgvUsers.AutoGenerateColumns = true;
                 this.dgvRepositories.AutoGenerateColumns = true;
@@ -230,14 +238,17 @@ namespace UsersGitHubRepositories
 
             try
             {
+                
+                if (dgvUsers.SelectedRows.Count > 0)
+                {
+                    intSelectedUserID = (int)dgvUsers.SelectedRows[0].Cells["UserID"].Value;
 
-                intSelectedUserID = (int)dgvUsers.SelectedRows[0].Cells["UserID"].Value;
-
-                mobjRepositoryModel.GetUserRepository(intSelectedUserID);
-
+                    mobjRepositoryModel.GetUserRepository(intSelectedUserID);
+                }
             }
             catch (Exception Ex)
             {
+                Console.WriteLine(Ex.Message);
                 MessageBox.Show(
                    this,
                    "נכשל לשלוף את רשימת המאגרים של המשתמש",
@@ -247,5 +258,135 @@ namespace UsersGitHubRepositories
                    MessageBoxOptions.RtlReading);
             }
         }
+
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            if (mobjRepositoryModel == null ||
+                !mobjRepositoryModel.IsDatabaseReady)
+            {
+                mobjRepositoryModel.CreateDataBase(cbDataBases.Text);
+            }
+
+            mobjRepositoryModel.GetAllUsers();
+
+            //UpdateDataView();
+        }
+
+        private void bwGetUsersRepo_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            RepositoryModel objRepoModelInWork;
+
+            objRepoModelInWork = (RepositoryModel)e.Argument;
+
+            try
+            {
+                mobjRepositoryModel.CreateDataBase(mstrSelectedDB);
+
+                GitHubClient.OpenClient(string.Format("{0}:{1}", mstrGitLogin, mstrGitPassword));
+
+                GetUsersFromGitHub();
+
+            }
+            catch (Exception Ex)
+            {
+                throw new Exception("Failed To Complete DoWork", Ex);
+            }
+        }
+
+        private void bwGetUsersRepo_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            pbGetRepoStatus.Value = e.ProgressPercentage;            
+            
+        }
+
+        private void bwGetUsersRepo_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show(
+                   this,
+                   "נכשל לשלוף את רשימת המאגרים של המשתמש",
+                   "אירעה שגיאה",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
+                   MessageBoxOptions.RtlReading);
+            }
+            else
+            {
+                mobjRepositoryModel.GetAllUsers();
+                pbGetRepoStatus.Value = 0;
+            }
+        }
+
+        private void GetUsersFromGitHub()
+        {
+            GitHubUsers objGitHubUsers;
+            int intNumberOfPages = 10;
+
+            for (int intPageNumber = 1; intPageNumber <= intNumberOfPages; intPageNumber++)
+            {
+
+                if (bwGetUsersRepo.CancellationPending)
+                {
+                    break;
+                }
+
+                objGitHubUsers = GitHubClient.GetUsersAsync(mstrQueryParam, intPageNumber).GetAwaiter().GetResult();
+
+                UpdateUsersData(objGitHubUsers, intPageNumber);
+
+                if (objGitHubUsers.Total_Count < 1000)
+                {
+                    intNumberOfPages = (objGitHubUsers.Total_Count / 100) + 1;
+                }                
+            }
+        }
+
+        private void UpdateUsersData(GitHubUsers objGitHubUsers,int intPageNumber)
+        {
+            int intUserCount;
+            User objNewUserData;
+            List<Repository> objUserRepositories;
+
+            intUserCount = 1;
+
+            foreach (User objUser in objGitHubUsers.Items)
+            {
+                try
+                {
+                    if (bwGetUsersRepo.CancellationPending)
+                    {
+                        break;
+                    }
+                    objNewUserData = GitHubClient.GetUsersDataAsync(objUser).GetAwaiter().GetResult();
+
+                    mobjRepositoryModel.InsertUserToDB(objNewUserData);
+
+                    objUserRepositories = GitHubClient.GetUserRepsitoriesAsync(objUser).GetAwaiter().GetResult();
+
+                    mobjRepositoryModel.InsertUserRepositories(objUser, objUserRepositories);
+
+                    bwGetUsersRepo.ReportProgress(((intUserCount++ + (100 * intPageNumber)) * 100) / objGitHubUsers.Total_Count);
+                }
+                catch (HttpRequestException HttpEx)
+                {
+                    Console.WriteLine(HttpEx.Message);
+                    Console.WriteLine(string.Format("Not all User Data Updated for user: {0}", objUser.Login));
+                }
+                catch (Exception Ex)
+                {
+                    Console.WriteLine(Ex.Message);
+                }
+            }
+        }
+
+        private void Cancel_Click(object sender, EventArgs e)
+        {
+            if (bwGetUsersRepo.IsBusy)
+            {
+                bwGetUsersRepo.CancelAsync();
+            }
+        }
     }
+
 }

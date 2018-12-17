@@ -51,6 +51,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tbGitLogin = new System.Windows.Forms.TextBox();
             this.gbQuery = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.btnRunQuery = new System.Windows.Forms.Button();
             this.tbQueryPrameter = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -70,6 +72,8 @@
             this.bindingNavigatorMoveNextItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.pbGetRepoStatus = new System.Windows.Forms.ToolStripProgressBar();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.gbRepositories = new System.Windows.Forms.GroupBox();
             this.dgvRepositories = new System.Windows.Forms.DataGridView();
@@ -87,6 +91,7 @@
             this.bindingNavigatorMoveLastItem1 = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.bwGetUsersRepo = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -182,6 +187,7 @@
             // 
             // cbWindowsAuth
             // 
+            this.cbWindowsAuth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbWindowsAuth.AutoSize = true;
             this.cbWindowsAuth.Checked = true;
             this.cbWindowsAuth.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -195,28 +201,31 @@
             // 
             // btnConnect
             // 
+            this.btnConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConnect.Location = new System.Drawing.Point(6, 98);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(75, 23);
-            this.btnConnect.TabIndex = 8;
+            this.btnConnect.TabIndex = 3;
             this.btnConnect.Text = "התחבר";
             this.btnConnect.UseVisualStyleBackColor = true;
             this.btnConnect.Click += new System.EventHandler(this.BtnConnect_Click);
             // 
             // tbPassword
             // 
+            this.tbPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPassword.Enabled = false;
             this.tbPassword.Location = new System.Drawing.Point(6, 72);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tbPassword.Size = new System.Drawing.Size(150, 20);
-            this.tbPassword.TabIndex = 7;
+            this.tbPassword.TabIndex = 2;
             this.tbPassword.UseSystemPasswordChar = true;
             this.tbPassword.Leave += new System.EventHandler(this.Password_Leave);
             // 
             // label4
             // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(224, 72);
             this.label4.Name = "label4";
@@ -227,6 +236,7 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(195, 147);
             this.label2.Name = "label2";
@@ -237,6 +247,7 @@
             // 
             // cbDataBases
             // 
+            this.cbDataBases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDataBases.FormattingEnabled = true;
             this.cbDataBases.Items.AddRange(new object[] {
             "<New>"});
@@ -244,19 +255,21 @@
             this.cbDataBases.Name = "cbDataBases";
             this.cbDataBases.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbDataBases.Size = new System.Drawing.Size(150, 21);
-            this.cbDataBases.TabIndex = 2;
+            this.cbDataBases.TabIndex = 4;
             // 
             // tbUserName
             // 
+            this.tbUserName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbUserName.Enabled = false;
             this.tbUserName.Location = new System.Drawing.Point(6, 48);
             this.tbUserName.Name = "tbUserName";
             this.tbUserName.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tbUserName.Size = new System.Drawing.Size(150, 20);
-            this.tbUserName.TabIndex = 5;
+            this.tbUserName.TabIndex = 1;
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(197, 51);
             this.label3.Name = "label3";
@@ -267,6 +280,7 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(236, 22);
             this.label1.Name = "label1";
@@ -277,6 +291,7 @@
             // 
             // cbListOfServers
             // 
+            this.cbListOfServers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbListOfServers.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.serversListBindingSource, "ServerName", true));
             this.cbListOfServers.DataSource = this.serversListBindingSource;
             this.cbListOfServers.DisplayMember = "ServerName";
@@ -314,18 +329,20 @@
             // 
             // tbGitPassword
             // 
+            this.tbGitPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbGitPassword.Location = new System.Drawing.Point(6, 53);
             this.tbGitPassword.Name = "tbGitPassword";
             this.tbGitPassword.PasswordChar = '*';
             this.tbGitPassword.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tbGitPassword.Size = new System.Drawing.Size(150, 20);
-            this.tbGitPassword.TabIndex = 11;
+            this.tbGitPassword.TabIndex = 6;
             this.tbGitPassword.UseSystemPasswordChar = true;
             this.tbGitPassword.TextChanged += new System.EventHandler(this.GitLogin_TextChanged);
             this.tbGitPassword.Leave += new System.EventHandler(this.Password_Leave);
             // 
             // label6
             // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(204, 28);
             this.label6.Name = "label6";
@@ -336,6 +353,7 @@
             // 
             // label7
             // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(224, 53);
             this.label7.Name = "label7";
@@ -346,17 +364,20 @@
             // 
             // tbGitLogin
             // 
+            this.tbGitLogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbGitLogin.Location = new System.Drawing.Point(6, 25);
             this.tbGitLogin.MaxLength = 20;
             this.tbGitLogin.Name = "tbGitLogin";
             this.tbGitLogin.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tbGitLogin.Size = new System.Drawing.Size(150, 20);
-            this.tbGitLogin.TabIndex = 9;
+            this.tbGitLogin.TabIndex = 5;
             this.tbGitLogin.TextChanged += new System.EventHandler(this.GitLogin_TextChanged);
             // 
             // gbQuery
             // 
             this.gbQuery.BackColor = System.Drawing.SystemColors.Control;
+            this.gbQuery.Controls.Add(this.button1);
+            this.gbQuery.Controls.Add(this.btnRefresh);
             this.gbQuery.Controls.Add(this.btnRunQuery);
             this.gbQuery.Controls.Add(this.tbQueryPrameter);
             this.gbQuery.Controls.Add(this.label5);
@@ -370,18 +391,44 @@
             this.gbQuery.TabStop = false;
             this.gbQuery.Text = "חיפוש";
             // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(6, 82);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(58, 23);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "ביטול";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Cancel_Click);
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRefresh.Enabled = false;
+            this.btnRefresh.Location = new System.Drawing.Point(70, 82);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(58, 23);
+            this.btnRefresh.TabIndex = 9;
+            this.btnRefresh.Text = "רענן";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.Refresh_Click);
+            // 
             // btnRunQuery
             // 
-            this.btnRunQuery.Location = new System.Drawing.Point(6, 82);
+            this.btnRunQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRunQuery.Location = new System.Drawing.Point(148, 82);
             this.btnRunQuery.Name = "btnRunQuery";
             this.btnRunQuery.Size = new System.Drawing.Size(86, 23);
-            this.btnRunQuery.TabIndex = 4;
+            this.btnRunQuery.TabIndex = 8;
             this.btnRunQuery.Text = "חפש משתמש";
             this.btnRunQuery.UseVisualStyleBackColor = true;
-            this.btnRunQuery.Click += new System.EventHandler(this.BtnRunQuery_Click);
+            this.btnRunQuery.Click += new System.EventHandler(this.RunQuery_Click);
             // 
             // tbQueryPrameter
             // 
+            this.tbQueryPrameter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbQueryPrameter.Location = new System.Drawing.Point(6, 22);
             this.tbQueryPrameter.MaxLength = 20;
             this.tbQueryPrameter.Name = "tbQueryPrameter";
@@ -392,6 +439,7 @@
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(184, 16);
             this.label5.Name = "label5";
@@ -438,10 +486,11 @@
             this.dgvUsers.AllowUserToAddRows = false;
             this.dgvUsers.AllowUserToDeleteRows = false;
             this.dgvUsers.AutoGenerateColumns = false;
-            this.dgvUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dgvUsers.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dgvUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvUsers.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dgvUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvUsers.DataSource = this.bsUsers;
+            this.dgvUsers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvUsers.Location = new System.Drawing.Point(3, 41);
             this.dgvUsers.MultiSelect = false;
             this.dgvUsers.Name = "dgvUsers";
@@ -451,7 +500,7 @@
             this.dgvUsers.ShowEditingIcon = false;
             this.dgvUsers.ShowRowErrors = false;
             this.dgvUsers.Size = new System.Drawing.Size(525, 135);
-            this.dgvUsers.TabIndex = 2;
+            this.dgvUsers.TabIndex = 10;
             this.dgvUsers.SelectionChanged += new System.EventHandler(this.Users_SelectionChanged);
             // 
             // bnUsersNavigator
@@ -470,7 +519,9 @@
             this.bindingNavigatorMoveLastItem,
             this.bindingNavigatorSeparator2,
             this.bindingNavigatorAddNewItem,
-            this.bindingNavigatorDeleteItem});
+            this.bindingNavigatorDeleteItem,
+            this.toolStripSeparator1,
+            this.pbGetRepoStatus});
             this.bnUsersNavigator.Location = new System.Drawing.Point(3, 16);
             this.bnUsersNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
             this.bnUsersNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem;
@@ -569,6 +620,18 @@
             this.bindingNavigatorSeparator2.Name = "bindingNavigatorSeparator2";
             this.bindingNavigatorSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // pbGetRepoStatus
+            // 
+            this.pbGetRepoStatus.Name = "pbGetRepoStatus";
+            this.pbGetRepoStatus.Size = new System.Drawing.Size(200, 22);
+            this.pbGetRepoStatus.Step = 2;
+            this.pbGetRepoStatus.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            // 
             // dataGridView2
             // 
             this.dataGridView2.AllowUserToAddRows = false;
@@ -599,14 +662,25 @@
             this.dgvRepositories.AllowUserToAddRows = false;
             this.dgvRepositories.AllowUserToDeleteRows = false;
             this.dgvRepositories.AutoGenerateColumns = false;
+            this.dgvRepositories.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvRepositories.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.dgvRepositories.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dgvRepositories.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvRepositories.DataSource = this.bsRepositories;
             this.dgvRepositories.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvRepositories.Location = new System.Drawing.Point(3, 41);
+            this.dgvRepositories.MultiSelect = false;
             this.dgvRepositories.Name = "dgvRepositories";
             this.dgvRepositories.ReadOnly = true;
+            this.dgvRepositories.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.dgvRepositories.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.dgvRepositories.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvRepositories.ShowCellErrors = false;
+            this.dgvRepositories.ShowCellToolTips = false;
+            this.dgvRepositories.ShowEditingIcon = false;
+            this.dgvRepositories.ShowRowErrors = false;
             this.dgvRepositories.Size = new System.Drawing.Size(525, 183);
-            this.dgvRepositories.TabIndex = 2;
+            this.dgvRepositories.TabIndex = 11;
             // 
             // bnRepositoryNavigator
             // 
@@ -735,6 +809,14 @@
             this.dataGridView1.Size = new System.Drawing.Size(525, 208);
             this.dataGridView1.TabIndex = 0;
             // 
+            // bwGetUsersRepo
+            // 
+            this.bwGetUsersRepo.WorkerReportsProgress = true;
+            this.bwGetUsersRepo.WorkerSupportsCancellation = true;
+            this.bwGetUsersRepo.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwGetUsersRepo_DoWork);
+            this.bwGetUsersRepo.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwGetUsersRepo_ProgressChanged);
+            this.bwGetUsersRepo.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwGetUsersRepo_RunWorkerCompleted);
+            // 
             // RepositoryView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -846,6 +928,11 @@
         private System.Windows.Forms.TextBox tbGitPassword;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.GroupBox gbGIT;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.ComponentModel.BackgroundWorker bwGetUsersRepo;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripProgressBar pbGetRepoStatus;
     }
 }
 

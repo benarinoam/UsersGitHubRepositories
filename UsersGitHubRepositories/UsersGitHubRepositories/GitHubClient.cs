@@ -102,49 +102,28 @@ namespace UsersGitHubRepositories
         /// </summary>
         /// <param name="strQueryPrameter">User Login name to search</param>
         /// <returns></returns>
-        public static async Task<GitHubUsers> GetUsersAsync(string strQueryPrameter)
+        public static async Task<GitHubUsers> GetUsersAsync(string strQueryPrameter,int intPageNumber)
         {
 
             string strSearchPath;
             string strResponseData;
             GitHubUsers objGitHubUsers = null;
-            int intNumberOfPages = 10;
 
             try
             {
+                strSearchPath = string.Format(@"search/users?q={0}+type:user&page={1}&per_page=100", strQueryPrameter, intPageNumber);
 
-                for (int intPageNumber = 1; intPageNumber <= intNumberOfPages; intPageNumber++)
+                HttpResponseMessage objResponse = mobjClient.GetAsync(strSearchPath).Result;
+
+                objResponse.EnsureSuccessStatusCode();
+
+                if (objResponse.IsSuccessStatusCode)
                 {
-                    System.Threading.Thread.Sleep(200);
+                    strResponseData = await objResponse.Content.ReadAsStringAsync();
 
-                    strSearchPath = string.Format(@"search/users?q={0}+type:user&page={1}&per_page=100", strQueryPrameter, intPageNumber);
-
-                    HttpResponseMessage objResponse = mobjClient.GetAsync(strSearchPath).Result;
-
-                    objResponse.EnsureSuccessStatusCode();
-
-                    if (objResponse.IsSuccessStatusCode)
-                    {
-
-                        strResponseData = await objResponse.Content.ReadAsStringAsync();
-
-                        if (objGitHubUsers == null)
-                        {
-                            objGitHubUsers = JsonConvert.DeserializeObject<GitHubUsers>(strResponseData);
-                        }
-                        else
-                        {
-                            objGitHubUsers.Items.AddRange(
-                                JsonConvert.DeserializeObject<GitHubUsers>(strResponseData).Items);
-                        }
-
-
-                        if (objGitHubUsers.Total_Count < 1000)
-                        {
-                            intNumberOfPages = (objGitHubUsers.Total_Count / 100) + 1;
-                        }
-                    }
+                    objGitHubUsers = JsonConvert.DeserializeObject<GitHubUsers>(strResponseData);
                 }
+
                 return objGitHubUsers;
             }
             catch (HttpRequestException HttpEx)
@@ -172,7 +151,7 @@ namespace UsersGitHubRepositories
 
             try
             {
-                System.Threading.Thread.Sleep(200);
+                //System.Threading.Thread.Sleep(200);
 
                 strSearchPath = string.Format(@"users/{0}/repos", objGitHubUser.Login);
 
@@ -208,9 +187,9 @@ namespace UsersGitHubRepositories
         /// Updates Extra Users Data from GitHub. 
         /// GitHub requests Limit to 5000.
         /// </summary>
-        /// <param name="objGitHubUsers">List of GitHub users from the search result</param>
+        /// <param name="objGitHubUser">List of GitHub users from the search result</param>
         /// <returns></returns>
-        public static async Task<GitHubUsers> GetUsersDataAsync(GitHubUsers objGitHubUsers)
+        public static async Task<User> GetUsersDataAsync(User objGitHubUser)
         {
 
             string strSearchPath;
@@ -219,36 +198,24 @@ namespace UsersGitHubRepositories
 
             try
             {
-                foreach (User objUser in objGitHubUsers.Items)
+
+                strSearchPath = string.Format(@"users/{0}", objGitHubUser.Login);
+
+                HttpResponseMessage objResponse = mobjClient.GetAsync(strSearchPath).Result;
+
+                objResponse.EnsureSuccessStatusCode();
+
+                if (objResponse.IsSuccessStatusCode)
                 {
-                    try
-                    {
-                        strSearchPath = string.Format(@"users/{0}", objUser.Login);
 
-                        System.Threading.Thread.Sleep(200);
+                    strResponseData = await objResponse.Content.ReadAsStringAsync();
 
-                        HttpResponseMessage objResponse = mobjClient.GetAsync(strSearchPath).Result;
+                    objUserData = JsonConvert.DeserializeObject<User>(strResponseData);
 
-                        objResponse.EnsureSuccessStatusCode();
-
-                        if (objResponse.IsSuccessStatusCode)
-                        {
-
-                            strResponseData = await objResponse.Content.ReadAsStringAsync();
-
-                            objUserData = JsonConvert.DeserializeObject<User>(strResponseData);
-
-                            objUser.Update(objUserData);
-                        }
-                    }
-                    catch (HttpRequestException HttpEx)
-                    {
-                        Console.WriteLine(string.Format("Not all User Data Updated for user: {0}", objUser.Login));
-                    }
-
+                    objGitHubUser.Update(objUserData);
                 }
 
-                return objGitHubUsers;
+                return objGitHubUser;
             }
             catch (Exception Ex)
             {
