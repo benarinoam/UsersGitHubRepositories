@@ -30,11 +30,11 @@ ________________________________________________________________________________
  * **GitHub Api restrict for only 1000 Search Results per Request.**
  * **GitHub Api restrict for only 60 requests per hour without Authorization.** 
  * **GiHub Ap i Limit Requests to 5000 per hour with Basic Authentication.**
- * **No Use Of Background Worker to make UI responding.**
+ * **--No Use Of Background Worker to make UI responding.--** Fixied
  * **N/A Is Repository without Language**
  
- :bell: **Need To Optimize Memory Useage by Load each Page of User's Search 
- 		Seperatlly to the Database (Also apply to Repositories)**
+ :bell: **--Need To Optimize Memory Useage by Load each Page of User's Search 
+ 		Seperatlly to the Database (Also apply to Repositories)--** Fixed
 ___________________________________________________________________________________________________________________ 
 
  **SQL Queries**
