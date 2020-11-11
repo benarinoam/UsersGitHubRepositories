@@ -57,7 +57,7 @@ namespace UsersGitHubRepositories
 
             objResponseData = new string[] { "", strState };
 
-            var byteArray = Encoding.ASCII.GetBytes("benarinoam:Shalevb10");
+            var byteArray = Encoding.ASCII.GetBytes("benarinoam:XXXX");
             mobjClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
             AuthorizationObject objAuthorization = new AuthorizationObject()
